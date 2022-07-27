@@ -12,6 +12,12 @@ const connectDB = require('./db/connect');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 const cookieParser = require('cookie-parser')
 const NotFoundMiddleware = require('./middleware/not-found');
+const fileUpload = require('express-fileupload');
+const rateLimiter = require('express-rate-limit');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const cors = require('cors');
+const mongoSanitize = require('express-mongo-sanitize');
 
 
 /* router import */
@@ -22,9 +28,17 @@ const reviewRouter = require('./routes/reviewRoute');
 const orderRouter = require('./routes/orderRoutes');
 
 
+app.use(helmet());
+app.use(cors());
+app.use(xss());
+app.use(mongoSanitize());
+
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 //app.use(express.bodyParser());
+
+app.use(express.static('./public'));
+app.use(fileUpload());
 
 
 app.get('/', (req, res) => {
